@@ -8,25 +8,33 @@ import cors from "cors";
 import { connectDB } from "./db/db.js";
 import express from "express";
 import userRoutes from "./routes/userRoutes.js";
+import path, { dirname } from "path"
 
-
-
+const __dirname=path.resolve();
+const port=process.env.PORT || 8000
 connectDB()
-
-
 const app=express();
 
 app.use(express.json());
-
-
-app.use(cors({
-    origin: "http://localhost:5173"
-}))
+if(process.env.NODE_ENV!=="production")
+{
+    app.use(cors({
+        origin: "http://localhost:5173"
+    }))
+}
 
 
 app.use('/api/users',userRoutes)
 
-
-app.listen(5000,()=>{
-    console.log("server is runnig on: 5000 ")
+if(process.env.NODE_ENV==="production")
+    {
+    
+        app.use(express.static(path.join(__dirname,"../client/dist")))
+        app.get(/.*/,(req,res)=>{
+            res.sendFile(path.join(__dirname,"../client","dist","index.html"))
+        })
+        
+    }
+app.listen(port,()=>{
+    console.log("server is runnig on: ",port)
     })

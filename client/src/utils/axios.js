@@ -2,9 +2,9 @@
 
 import axios from "axios"
 
-const BaseUrl=import.meta.env.MODE==="development"?"http://localhost:5000/api/users":"/api"
+// const BaseUrl=import.meta.env.MODE==="development"?"http://localhost:8000/api":"/api"
  const api = axios.create({
-    baseURL:BaseUrl
+    baseURL:"/api"
 })
 
 export default api

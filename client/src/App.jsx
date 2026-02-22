@@ -2,38 +2,42 @@ import { useEffect, useState } from 'react'
 import api from './utils/axios.js'
 
 function App() {
-  const [user,setuser]=useState([])
-useEffect(()=>{
-  const fectchUser=async ()=>{
-    try {
-      
-      const res= await api.get("/getallusers")
-      setuser(res.data)
-      
-    } catch (error) {
-      
+  const [users, setuser] = useState([])
+  useEffect(() => {
+    const fectchUser = async () => {
+      try {
+
+        const res = await api.get("/users/getallusers")
+
+        
+
+        console.log(res.data.payload);
+        setuser(res.data.payload)
+
+      } catch (error) {
+
+      }
     }
-  }
-  fectchUser();
-},[])
+    fectchUser();
+  }, [])
 
 
   return (
-   <>
-    
+    <>
+
       {
-        user.map((item,key)=>{
-         return(
-          <div key={key}>
-            <div>{item.name}</div>
-            <div>{item.email}</div>
-          </div>
-          
-         )
+         users.map((item, key) => {
+          return (
+            <div key={key}>
+              <div>{item.name}</div>
+              <div>{item.email}</div>
+            </div>
+
+          )
         })
       }
-    
-   </>
+
+    </>
   )
 }
 
