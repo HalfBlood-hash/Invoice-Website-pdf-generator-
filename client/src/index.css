@@ -1,5 +1,8 @@
+@import "tailwindcss";
 
-body{
-  background-color: black;
-  color:white
+@plugin "daisyui";
+
+/* Make only the light theme available (optional) */
+@plugin "daisyui/theme" {
+  name: "light";
 }

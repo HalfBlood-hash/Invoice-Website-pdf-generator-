@@ -9,6 +9,7 @@ import { connectDB } from "./db/db.js";
 import express from "express";
 import userRoutes from "./routes/userRoutes.js";
 import path, { dirname } from "path"
+import cookieParser from "cookie-parser"
 
 const __dirname=path.resolve();
 const port=process.env.PORT || 8000
@@ -16,10 +17,12 @@ connectDB()
 const app=express();
 
 app.use(express.json());
+app.use(cookieParser());
 if(process.env.NODE_ENV!=="production")
 {
     app.use(cors({
-        origin: "http://localhost:5173"
+        origin: "http://localhost:5173",
+        credentials:true
     }))
 }
 

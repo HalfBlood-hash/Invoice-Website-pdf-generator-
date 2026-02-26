@@ -1,41 +1,30 @@
 import { useEffect, useState } from 'react'
 import api from './utils/axios.js'
-
+import {Routes,Route} from "react-router-dom"
+import Login from './pages/Login.jsx'
+import History from './pages/History.jsx'
+import Home from './pages/Home.jsx'
+import Header from './component/Header.jsx'
+import { getCurrentUser } from './feature/userSlice.js'
+import { useSelector,useDispatch } from 'react-redux'
 function App() {
-  const [users, setuser] = useState([])
-  useEffect(() => {
-    const fectchUser = async () => {
-      try {
+const dispatch=useDispatch()
+const {loggedUser,isLoggedIn,loading,error}=useSelector((state)=>state.users)
 
-        const res = await api.get("/users/getallusers")
-
-        
-
-        console.log(res.data.payload);
-        setuser(res.data.payload)
-
-      } catch (error) {
-
-      }
-    }
-    fectchUser();
-  }, [])
-
+  
+ useEffect(()=>{
+  dispatch(getCurrentUser())
+ },[dispatch])
 
   return (
     <>
-
-      {
-         users.map((item, key) => {
-          return (
-            <div key={key}>
-              <div>{item.name}</div>
-              <div>{item.email}</div>
-            </div>
-
-          )
-        })
-      }
+    <Header/>
+    <Routes>
+      <Route  path='/'  element={<Login/>} />
+      <Route  path='/home'  element={<Home/>} />
+      <Route  path='/history'  element={<History/>} />
+    </Routes>
+    
 
     </>
   )
