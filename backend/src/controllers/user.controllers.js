@@ -71,21 +71,21 @@ export const userLogin =async(req,res)=>{
 }
 
 
-export const getcurrentuser = async (req, res) => {
-    // verifyJwt put the user on req.user
-    return res.json({
-      payload: {
-        user: {
-          _id: req.user._id,
-          name: req.user.name,
-          email: req.user.email
-        }
-      }
-    });
-  };
+// export const getcurrentuser = async (req, res) => {
+//     // verifyJwt put the user on req.user
+//     return res.json({
+//       payload: {
+//         user: {
+//           _id: req.user._id,
+//           name: req.user.name,
+//           email: req.user.email
+//         }
+//       }
+//     });
+//   };
   
-// export const getcurrentuser=async(req,res)=>{
+export const getcurrentuser=async(req,res)=>{
 
 
-//     return res.status(200).json(req.user);
-// }
+    return res.status(200).json({message:"get user sucessful",payload:req.user});
+}

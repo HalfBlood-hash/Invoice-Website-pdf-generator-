@@ -13,7 +13,7 @@ export const verifyJwt = async (req,res, next) => {
         let token;
         const auth = req.headers.authorization;
         if (auth?.startsWith('Bearer ')) token = auth.split(' ')[1];
-        // Fallback to cookie
+       // Fallback to cookie
         if (!token && req.cookies?.token) token = req.cookies.token;
 
         if (!token) return res.status(401).json({ message: 'Unauthorized: token missing' });
