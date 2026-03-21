@@ -6,8 +6,6 @@ import userModel from "../model/user.model.js"
 
 export const verifyJwt = async (req,res, next) => {
 
-    console.log("cookeis:",req.cookies)
-
     try {
         // Try Authorization header first
         let token;
@@ -18,8 +16,8 @@ export const verifyJwt = async (req,res, next) => {
 
         if (!token) return res.status(401).json({ message: 'Unauthorized: token missing' });
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET); // throws if invalid/expired
-        const user = await userModel.findById(decoded.sub).select('-passwordHash');
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET); // throws if invalid/expired
+        const user = await userModel.findById(decoded._id).select('-passwordHash');
         if (!user) return res.status(401).json({ message: 'Unauthorized: user not found' });
 
         req.user = user;
@@ -30,7 +28,7 @@ export const verifyJwt = async (req,res, next) => {
     }
     catch (error) {
 
-        console.error('verifyJwt error:', err.message);
+        console.error('verifyJwt error:', error.message);
         return res.status(401).json({ message: 'Unauthorized: invalid or expired token' });
 
     }

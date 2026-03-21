@@ -24,6 +24,10 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const res = await api.post('/users/login', { email, password })
+      // Save token to localStorage
+      if (res.data?.token) {
+        localStorage.setItem('token', res.data.token)
+      }
       // Return whatever your backend returns. Assuming payload has user (adjust as needed)
       return res.data?.payload
     } catch (error) {
@@ -42,8 +46,7 @@ export const getCurrentUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
       try {
          const res= await api.get('/users/current-user')
-         console.log(res);
-         return res.data;
+         return res.data.payload;
 
 
       } catch (error) {
@@ -64,14 +67,15 @@ const usersSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    // // Optional: add logout, clearError, etc.
-    // logout(state) {
-    //   state.loggedUser = null
-    //   state.isLoggedIn = false
-    // },
-    // clearError(state) {
-    //   state.error = null
-    // }
+    logout(state) {
+      state.loggedUser = null
+      state.isLoggedIn = false
+      state.error = null
+      localStorage.removeItem('token')
+    },
+    clearError(state) {
+      state.error = null
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -125,5 +129,5 @@ const usersSlice = createSlice({
   },
 })
 
-// export const { logout, clearError } = usersSlice.actions
+export const { logout, clearError } = usersSlice.actions
 export default usersSlice.reducer

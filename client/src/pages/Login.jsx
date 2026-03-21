@@ -33,7 +33,6 @@ export default function Login() {
     try {
       
       const user = await dispatch(loginUser({ email, password })).unwrap()
-      console.log(user,loggedUser,isLoggedIn)
 
         toast.success("login successful")
         navigate('/home')
@@ -41,7 +40,6 @@ export default function Login() {
       // Only needed if using unwrap
       toast.error(err || 'Login failed')
       setError(err || 'Login failed')
-      console.log(err)
     } finally {
       setLoading(false)
     }
@@ -76,7 +74,7 @@ export default function Login() {
                   </div>
                   {!!(error || storeError) && (
                     <p className="text-error text-center mt-2">
-                      {error || storeError}
+                      {error }
                     </p>
                   )}
                   <div>

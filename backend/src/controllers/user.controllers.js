@@ -34,7 +34,6 @@ export const registerUser=async(req,res)=>{
 
 export const userLogin =async(req,res)=>{
     const {email,password}=req.body
-    // console.log(req.body);
 
     if(!email || ! password) 
        return res.status(400).json({message:"All Feild is Required"})
@@ -61,7 +60,7 @@ export const userLogin =async(req,res)=>{
         .status(200)
         .cookie("refreshtoken",refreshtoken,options)
         .cookie("accesstoken",accesstoken,options)
-        .json({message:"Login Succssfull!",payload:loggedUser})
+        .json({message:"Login Succssfull!",token:accesstoken,payload:loggedUser})
 
     } catch (error) {
         console.error("login Error ",error)
