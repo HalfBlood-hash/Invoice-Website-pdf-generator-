@@ -5,10 +5,12 @@ import { useSelector, useDispatch } from 'react-redux'
 export default function History() {
   const dispatch = useDispatch()
   const { users, loading, error,loggedUser  } = useSelector((state) => state.users)
-  
+  console.log(users, loading, error,loggedUser)
   useEffect(() => {
-    dispatch(getUsers())
-  }, [dispatch])
+    if (users.length === 0) {
+      dispatch(getUsers())
+    }
+  }, [dispatch, users.length])
 
   return (
     <div>

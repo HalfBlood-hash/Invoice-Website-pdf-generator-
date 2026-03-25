@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import api from './utils/axios.js'
-import {Routes,Route, Navigate} from "react-router-dom"
+import {Routes,Route, Navigate, useLocation, useNavigate} from "react-router-dom"
 import Login from './pages/Login.jsx'
 import History from './pages/History.jsx'
 import Home from './pages/Home.jsx'
@@ -28,7 +28,8 @@ const PublicRoute = ({ isLoggedIn, loading, children }) => {
   }
   
   if (isLoggedIn) {
-    return <Navigate to="/home" replace />
+    const lastPath = window.localStorage.getItem('lastPath') || '/home'
+    return <Navigate to={lastPath} replace />
   }
   
   return children
@@ -37,11 +38,32 @@ const PublicRoute = ({ isLoggedIn, loading, children }) => {
 function App() {
 const dispatch=useDispatch()
 const {loggedUser,isLoggedIn,loading,error}=useSelector((state)=>state.users)
+const location = useLocation()
+const navigate = useNavigate()
 
   
  useEffect(()=>{
   dispatch(getCurrentUser())
  },[dispatch])
+
+ useEffect(() => {
+  if (location.pathname && location.pathname !== '/') {
+    window.localStorage.setItem('lastPath', location.pathname)
+  }
+ }, [location.pathname])
+
+ useEffect(() => {
+  if (!loading && isLoggedIn && location.pathname === '/') {
+    const lastPath = window.localStorage.getItem('lastPath') || '/home'
+    if (lastPath !== '/') {
+      navigate(lastPath, { replace: true })
+    }
+  }
+ }, [isLoggedIn, loading, location.pathname, navigate])
+
+ useEffect(() => {
+  console.log("Auth state changed:", { loggedUser: loggedUser ? loggedUser.name : null, isLoggedIn, loading, error })   
+ }, [loggedUser, isLoggedIn, loading, error])
 
   return (
     <>

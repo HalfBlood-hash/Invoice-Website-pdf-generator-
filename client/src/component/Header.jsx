@@ -17,14 +17,14 @@ export default function Header() {
             <div className="mx-auto max-w-6xl p-4">
                 <div  className="flex justify-between items-center" >
                     
-                        <Link to="/">Home</Link>
+                    {isLoggedIn && <Link to="/home">Home</Link>}
                     <div className="flex gap-4">
-                        <Link to="/history">History</Link>
+                        {isLoggedIn && <Link to="/history">History</Link>}
                         {
                             isLoggedIn ? (
                                 <button onClick={handleLogout} className="hover:underline">Logout</button>
                             ): (
-                                <Link to="/login" >Login</Link>
+                                <Link to="/" >Login</Link>
                             )
                         }
                     </div>
