@@ -20,6 +20,7 @@ export default function Header() {
                     {isLoggedIn && <Link to="/home">Home</Link>}
                     <div className="flex gap-4">
                         {isLoggedIn && <Link to="/history">History</Link>}
+                        {isLoggedIn && <Link to="/billform">BillForm</Link>}
                         {
                             isLoggedIn ? (
                                 <button onClick={handleLogout} className="hover:underline">Logout</button>

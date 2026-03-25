@@ -5,6 +5,7 @@ import Login from './pages/Login.jsx'
 import History from './pages/History.jsx'
 import Home from './pages/Home.jsx'
 import Header from './component/Header.jsx'
+import BillForm from './pages/BillForm.jsx'
 import { getCurrentUser } from './feature/userSlice.js'
 import { useSelector,useDispatch } from 'react-redux'
 
@@ -28,8 +29,8 @@ const PublicRoute = ({ isLoggedIn, loading, children }) => {
   }
   
   if (isLoggedIn) {
-    const lastPath = window.localStorage.getItem('lastPath') || '/home'
-    return <Navigate to={lastPath} replace />
+    
+    return <Navigate to= "/home" replace />
   }
   
   return children
@@ -47,21 +48,6 @@ const navigate = useNavigate()
  },[dispatch])
 
  useEffect(() => {
-  if (location.pathname && location.pathname !== '/') {
-    window.localStorage.setItem('lastPath', location.pathname)
-  }
- }, [location.pathname])
-
- useEffect(() => {
-  if (!loading && isLoggedIn && location.pathname === '/') {
-    const lastPath = window.localStorage.getItem('lastPath') || '/home'
-    if (lastPath !== '/') {
-      navigate(lastPath, { replace: true })
-    }
-  }
- }, [isLoggedIn, loading, location.pathname, navigate])
-
- useEffect(() => {
   console.log("Auth state changed:", { loggedUser: loggedUser ? loggedUser.name : null, isLoggedIn, loading, error })   
  }, [loggedUser, isLoggedIn, loading, error])
 
@@ -72,6 +58,7 @@ const navigate = useNavigate()
       <Route  path='/'  element={<PublicRoute isLoggedIn={isLoggedIn} loading={loading}><Login/></PublicRoute>} />
       <Route  path='/home'  element={<ProtectedRoute isLoggedIn={isLoggedIn} loading={loading}><Home/></ProtectedRoute>} />
       <Route  path='/history'  element={<ProtectedRoute isLoggedIn={isLoggedIn} loading={loading}><History/></ProtectedRoute>} />
+      <Route  path='/billform'  element={<ProtectedRoute isLoggedIn={isLoggedIn} loading={loading}><BillForm/></ProtectedRoute>} />
     </Routes>
     
 
