@@ -1,7 +1,7 @@
 
 // src/components/BillForm.jsx
 import React, { useState, useEffect } from 'react';
-import { generateInvoicePdf } from "../utils/pdfGenerator.js";
+import { generateInvoicePdf } from "../utils/generateInvoicePdf.js";
 
 const emptyItem = { desc: '', qty: '', price: '' };
 
