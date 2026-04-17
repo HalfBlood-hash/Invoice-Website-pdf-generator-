@@ -99,6 +99,38 @@ export const userLogout = async (req, res) => {
     }
 };
 
+export const refreshAccessToken = async (req, res) => {
+    try {
+        const refreshToken = req.cookies?.refreshtoken || req.body?.refreshToken;
+        if (!refreshToken) {
+            return res.status(401).json({ message: 'Refresh token not found' });
+        }
+
+        const user = await userModel.findOne({ refreshtoken: refreshToken }).select('-password');
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid refresh token' });
+        }
+
+        const { accesstoken, refreshtoken: newRefreshToken } = await accessandrefreshtoken(user._id);
+        user.refreshtoken = newRefreshToken;
+        await user.save();
+
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+        };
+
+        return res
+            .cookie('accesstoken', accesstoken, cookieOptions)
+            .cookie('refreshtoken', newRefreshToken, cookieOptions)
+            .status(200)
+            .json({ message: 'Token refreshed', token: accesstoken, payload: user });
+    } catch (error) {
+        console.error('refreshAccessToken error:', error);
+        return res.status(500).json({ message: 'Server error during token refresh' });
+    }
+};
+
 
 // export const getcurrentuser = async (req, res) => {
 //     // verifyJwt put the user on req.user

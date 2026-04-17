@@ -2,11 +2,19 @@
 
 import mongoose from "mongoose"
 
-export const connectDB=async()=>{
+export const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONOGOCONNECTIONURI)
-        console.log("Db connection successfull !")
+        await mongoose.connect(process.env.MONGODBCONNECTIONURI || process.env.MONOGOCONNECTIONURI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            socketTimeoutMS: 45000,
+            serverSelectionTimeoutMS: 5000,
+            maxPoolSize: 10,
+            connectTimeoutMS: 10000
+        })
+        console.log("Db connection successful!")
     } catch (error) {
-    console.error("Db connection failed !",error);
+        console.error("Db connection failed!", error);
+        process.exit(1);
     }
 }

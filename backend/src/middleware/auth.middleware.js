@@ -28,10 +28,11 @@ export const verifyJwt = async (req,res, next) => {
 
     }
     catch (error) {
-
         console.error('verifyJwt error:', error.message);
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token expired', code: 'TOKEN_EXPIRED' });
+        }
         return res.status(401).json({ message: 'Unauthorized: invalid or expired token' });
-
     }
 
 
