@@ -5,8 +5,6 @@ import mongoose from "mongoose"
 export const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGODBCONNECTIONURI || process.env.MONOGOCONNECTIONURI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
             socketTimeoutMS: 45000,
             serverSelectionTimeoutMS: 5000,
             maxPoolSize: 10,
