@@ -2,7 +2,7 @@
 
 import mongoose from "mongoose";
 
-import autoIncrement from "mongoose-auto-increment";
+
 
 const invoiceSchema = new mongoose.Schema({ 
     customerName:{
