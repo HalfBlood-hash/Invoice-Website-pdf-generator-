@@ -21,14 +21,41 @@ post http://localhost:8000/api/users/login
 Content-Type: application/json
 
 {
-    "email":"satyam@gmai.com",
+    "email":"satyam@gmail.com",
     "password":"satyam"
 }
 
 
 ###
-get http://localhost:8000/api/current-user
+get http://localhost:8000/api/users/current-user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OWMzZTk0NmEzOTU2MDQ1ZWMxYzQ1OTIiLCJlbWFpbCI6InNhdHlhbUBnbWFpbC5jb20iLCJuYW1lIjoic2F0eWFtIiwiaWF0IjoxNzc2MDU4NTI2LCJleHAiOjE3NzYxNDQ5MjZ9.pXIiE1HPzE9AeObHLdI39GllqxPxyZh52cqcGkxdmjU
 
+###
+get http://localhost:8000/api/invoices/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OWMzZTk0NmEzOTU2MDQ1ZWMxYzQ1OTIiLCJlbWFpbCI6InNhdHlhbUBnbWFpbC5jb20iLCJuYW1lIjoic2F0eWFtIiwiaWF0IjoxNzc2MDU4NTI2LCJleHAiOjE3NzYxNDQ5MjZ9.pXIiE1HPzE9AeObHLdI39GllqxPxyZh52cqcGkxdmjU
+
+###
+post http://localhost:8000/api/users/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OWMzZTk0NmEzOTU2MDQ1ZWMxYzQ1OTIiLCJlbWFpbCI6InNhdHlhbUBnbWFpbC5jb20iLCJuYW1lIjoic2F0eWFtIiwiaWF0IjoxNzc2MDU4NTI2LCJleHAiOjE3NzYxNDQ5MjZ9.pXIiE1HPzE9AeObHLdI39GllqxPxyZh52cqcGkxdmjU
+
+
+
+###
+post http://localhost:8000/api/invoices/create
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OWMzZTk0NmEzOTU2MDQ1ZWMxYzQ1OTIiLCJlbWFpbCI6InNhdHlhbUBnbWFpbC5jb20iLCJuYW1lIjoic2F0eWFtIiwiaWF0IjoxNzc2Mzk1MzkyLCJleHAiOjE3NzY0ODE3OTJ9.PHWbXp_dmzfOqjJeiwlKsUtdsWYIgwHL-TGboRswAGI
+{
+  "customerName": "Rahul Sharma",
+  "invoiceNumber": "INV-1001",
+  "invoiceDate": "2026-04-15T00:00:00.000Z",
+  "items": "Tiles",
+  "quantity": 120,
+  "price": 50,
+  "units": "sqft",
+  "gst": 18,
+  "discount": 5,
+  "dueDate": "2026-05-15T00:00:00.000Z",
+}
 
 
 
@@ -38,7 +65,7 @@ PORT = 8000
 MONOGOCONNECTIONURI=mongodb+srv://2309000satyam_db_user:YDmdh8FcqTBH3G7C@cluster0.8rpe2ln.mongodb.net/invoide_web_app?appName=Cluster0
 
 
-NODE_ENV=production
+NODE_ENV=development
 
 
 ACCESS_TOKEN_SECRET="xIYjF4UDJ0lrul7wu9S7ofmXdFSH2tpdp7R7Iu8Q4dljkGGOl7QKSvX4yK9gqBJc"

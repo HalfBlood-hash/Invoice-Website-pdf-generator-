@@ -8,6 +8,7 @@ import cors from "cors";
 import { connectDB } from "./db/db.js";
 import express from "express";
 import userRoutes from "./routes/userRoutes.js";
+import invoiceRoutes from "./routes/invoice.routes.js";
 import path, { dirname } from "path"
 import cookieParser from "cookie-parser"
 
@@ -28,6 +29,7 @@ if(process.env.NODE_ENV!=="production")
 
 
 app.use('/api/users',userRoutes)
+app.use('/api/invoices',invoiceRoutes)
 
 if(process.env.NODE_ENV==="production")
     {

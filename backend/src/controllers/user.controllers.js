@@ -12,6 +12,7 @@ export const getUser= async(req,res)=>{
 }
 export const registerUser=async(req,res)=>{
     const {name,email,password}= req.body
+    console.log("registerUser: Received data", { name, email, password: password ? "Provided" : "Not Provided" });
     if(!name || !email || !password)
         return res.status(400).json({message:"All feild is required"})
 
@@ -54,7 +55,7 @@ export const userLogin =async(req,res)=>{
         )
         const options={
             httpOnly:true,
-            secure:true
+            secure: process.env.NODE_ENV === 'production'
         }
         return res
         .status(200)
@@ -68,6 +69,35 @@ export const userLogin =async(req,res)=>{
     }
 
 }
+
+export const userLogout = async (req, res) => {
+    try {
+        const refreshToken = req.cookies?.refreshtoken;
+        if (!refreshToken) {
+            return res.status(204).json({ message: 'No refresh token found' });
+        }
+
+        const user = await userModel.findOne({ refreshtoken: refreshToken });
+        if (user) {
+            user.refreshtoken = null;
+            await user.save();
+        }
+
+        const cookieOptions = {
+            httpOnly: true,
+            secure: true,
+        };
+
+        return res
+            .clearCookie('refreshtoken', cookieOptions)
+            .clearCookie('accesstoken', cookieOptions)
+            .status(200)
+            .json({ message: 'Logout successful' });
+    } catch (error) {
+        console.error('logout Error ', error);
+        return res.status(500).json({ message: 'Server error during logout' });
+    }
+};
 
 
 // export const getcurrentuser = async (req, res) => {

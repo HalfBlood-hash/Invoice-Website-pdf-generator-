@@ -157,9 +157,34 @@ export async function generateInvoicePdf({
     let colX = margin;
 
     row.forEach((txt, i) => {
-      page.drawText(txt, { x: colX + 4, y: tableY, size: 10, font });
-      colX += cols[i].width;
+
+  if (i === 1) { // 👈 Description column
+    const lines = txt.split("\n");
+
+    lines.forEach((line, lineIndex) => {
+      page.drawText(line, {
+        x: colX + 4,
+        y: tableY - (lineIndex * 12), // spacing between lines
+        size: 10,
+        font,
+      });
     });
+
+  } else {
+    page.drawText(txt, {
+      x: colX + 4,
+      y: tableY,
+      size: 10,
+      font
+    });
+  }
+
+  colX += cols[i].width;
+});
+
+// 👇 IMPORTANT: move tableY based on number of lines
+const descLines = (row[1] || "").split("\n").length;
+tableY -= Math.max(18, descLines * 12);
 
     tableY -= 18;
   });

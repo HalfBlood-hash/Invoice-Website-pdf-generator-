@@ -21,8 +21,9 @@ const userSchema =new mongoose.Schema({
     
     },
     refreshtoken:{
-        type:[String]
-    }
+        type:String
+    },
+    
 
 
 },{timestamps:true})

@@ -55,6 +55,22 @@ export const getCurrentUser = createAsyncThunk(
   }
 );
 
+export const logoutUser = createAsyncThunk(
+  'users/logoutUser',
+  async (_, { rejectWithValue }) => {
+    try {
+      await api.post('/users/logout');
+      return;
+    } catch (error) {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Failed to logout';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const initialState = {
   users: [],
   loggedUser: null,     // 🔧 consistent name
@@ -125,6 +141,25 @@ const usersSlice = createSlice({
         state.loading=false;
         state.error=action.payload;
       
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.loggedUser = null;
+        state.isLoggedIn = false;
+        state.error = null;
+        localStorage.removeItem('token');
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Something went wrong during logout';
+        // Still logout locally even if backend fails
+        state.loggedUser = null;
+        state.isLoggedIn = false;
+        localStorage.removeItem('token');
       })
   },
 })

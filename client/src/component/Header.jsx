@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
 import {useSelector, useDispatch} from "react-redux"
-import { logout } from "../feature/userSlice"
+import { logoutUser } from "../feature/userSlice"
 
 export default function Header() {
     const { loggedUser, isLoggedIn } = useSelector((state) => state.users);
@@ -8,7 +8,7 @@ export default function Header() {
     const navigate = useNavigate();
     
     const handleLogout = () => {
-        dispatch(logout());
+        dispatch(logoutUser());
         navigate('/');
     }
     
@@ -17,8 +17,8 @@ export default function Header() {
             <div className="mx-auto max-w-6xl p-4">
                 <div  className="flex justify-between items-center" >
                     
-                    {isLoggedIn && <Link to="/home">Home</Link>}
-                    <div className="flex gap-4">
+                    {isLoggedIn && <Link to="/home" className="text-lg text-red-900">Home</Link>}
+                    <div className="flex gap-4 text-lg text-red-900">
                         {isLoggedIn && <Link to="/history">History</Link>}
                         {isLoggedIn && <Link to="/billform">BillForm</Link>}
                         {
