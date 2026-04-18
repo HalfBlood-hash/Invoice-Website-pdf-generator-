@@ -261,7 +261,7 @@ export default function Home() {
                 <td colSpan="4" className="py-2">
                   <button
                     type="submit"
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-semibold shadow-md transition"
+                    className="w-full bg-blue-500 text-white py-2 rounded-lg font-semibold shadow-md transition duration-200 ease-in-out hover:bg-blue-600 hover:shadow-lg hover:-translate-y-0.5"
                   >
                     Save & Download PDF
                   </button>

@@ -80,79 +80,71 @@ export default function Login() {
   }
 
   return (
-    <>
-      <div className="min-h-screen bg-base-200">
-        <div className="w-full mx-auto px-4 py-8">
-          <div className="max-w-100 mx-auto">
-            <div className="card bg-base-100">
-              <div className="card-body">
-                <h2 className="text-center text-2xl font-bold">{isRegister ? "Register" : "Login"}</h2>
-                <form onSubmit={handleSubmit}>
-                  {isRegister && (
-                    <div className='form-control mb-4 mt-4'>
-                      <input
-                        type='text'
-                        placeholder='enter your name'
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className='input input-bordered w-full rounded-2xl p-4 text-center'
-                      />
-                    </div>
-                  )}
-                  <div className='form-control mb-4 mt-4'>
-                    <input
-                      type='text'
-                      placeholder='enter your email'
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className='input input-bordered w-full rounded-2xl p-4 text-center'
-                    />
-                  </div>
-                  <div className='form-control mb-4 mt-4'>
-                    <input
-                      type='password'
-                      placeholder='enter your password'
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className='input input-bordered w-full rounded-2xl p-4 text-center'
-                    />
-                  </div>
-                  {!!(error || storeError) && (
-                    <p className="text-error text-center mt-2">
-                      {error }
-                    </p>
-                  )}
-                  <div>
-                    <button
-                      disabled={loading || storeLoading}
-                      type='submit'
-                      className='btn btn-success w-full rounded-2xl mt-4'
-                    >
-                      {(loading || storeLoading) ? "loading..." : (isRegister ? "Register" : "Login")}
-                    </button>
-                  </div>
-                </form>
-                <div className="text-center mt-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsRegister(!isRegister)
-                      setError("")
-                      setName("")
-                      setEmail("")
-                      setPassword("")
-                    }}
-                    className="link link-primary"
-                  >
-                    {isRegister ? "Already have an account? Login" : "Don't have an account? Register"}
-                  </button>
+    <div className="min-h-screen bg-gray-100 py-10">
+      <div className="container mx-auto px-4">
+        <div className="max-w-md mx-auto bg-white rounded-3xl border border-gray-200 shadow-xl overflow-hidden">
+          <div className="px-8 py-10">
+            <h2 className="text-center text-3xl font-bold text-gray-800 mb-3">{isRegister ? "Register" : "Login"}</h2>
+            <p className="text-center text-gray-500 mb-8">{isRegister ? "Create your account to access invoices" : "Sign in to manage your invoices"}</p>
+            <form onSubmit={handleSubmit}>
+              {isRegister && (
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full rounded-2xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none transition"
+                  />
                 </div>
+              )}
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full rounded-2xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none transition"
+                />
               </div>
+              <div className="mb-4">
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-2xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-800 focus:border-blue-500 focus:bg-white focus:outline-none transition"
+                />
+              </div>
+              {!!(error || storeError) && (
+                <p className="text-red-600 text-center mb-4">{error || storeError}</p>
+              )}
+              <button
+                disabled={loading || storeLoading}
+                type="submit"
+                className="w-full rounded-2xl bg-blue-600 px-4 py-3 text-white font-semibold shadow-sm hover:bg-blue-700 transition disabled:cursor-not-allowed disabled:bg-blue-300"
+              >
+                {(loading || storeLoading) ? "Loading..." : (isRegister ? "Register" : "Login")}
+              </button>
+            </form>
+            <div className="text-center mt-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsRegister(!isRegister)
+                  setError("")
+                  setName("")
+                  setEmail("")
+                  setPassword("")
+                }}
+                className="text-sm font-medium text-blue-600 hover:text-blue-800"
+              >
+                {isRegister ? "Already have an account? Login" : "Don't have an account? Register"}
+              </button>
             </div>
           </div>
-
         </div>
       </div>
-    </>
+    </div>
   )
 }
