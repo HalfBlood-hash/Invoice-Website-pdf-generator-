@@ -4,7 +4,7 @@ import mongoose from "mongoose"
 
 export const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGODBCONNECTIONURI || process.env.MONOGOCONNECTIONURI, {
+        await mongoose.connect(process.env.MONOGOCONNECTIONURI || process.env.MONOGOCONNECTIONURI, {
             socketTimeoutMS: 45000,
             serverSelectionTimeoutMS: 5000,
             maxPoolSize: 10,
