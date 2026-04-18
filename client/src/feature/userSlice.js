@@ -40,6 +40,24 @@ export const loginUser = createAsyncThunk(
   }
 )
 
+// ✅ Thunk: Register User — accept credentials from component
+export const registerUser = createAsyncThunk(
+  'users/registerUser',
+  async ({ name, email, password }, { rejectWithValue }) => {
+    try {
+      const res = await api.post('/users/register', { name, email, password })
+      // After registration, perhaps auto-login or just return success
+      return res.data?.message || 'Registration successful'
+    } catch (error) {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Failed to register'
+      return rejectWithValue(message)
+    }
+  }
+)
+
 
 export const getCurrentUser = createAsyncThunk(
   'user/getCurrentUser',
@@ -126,6 +144,20 @@ const usersSlice = createSlice({
         state.isLoggedIn = false
         state.loggedUser = null
         state.error = action.payload || 'Something went wrong during login'
+      })
+      // registerUser
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false
+        state.error = null
+        // Optionally set some state, but since registration doesn't log in, maybe just clear error
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload || 'Something went wrong during registration'
       })
       .addCase(getCurrentUser.pending,(state)=>{
         state.loading=true;
