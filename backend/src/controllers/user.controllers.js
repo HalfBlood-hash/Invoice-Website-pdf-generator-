@@ -12,7 +12,7 @@ export const getUser= async(req,res)=>{
 }
 export const registerUser=async(req,res)=>{
     const {name,email,password}= req.body
-    console.log("registerUser: Received data", { name, email, password: password ? "Provided" : "Not Provided" });
+    // console.log("registerUser: Received data", { name, email, password: password ? "Provided" : "Not Provided" });
     if(!name || !email || !password)
         return res.status(400).json({message:"All feild is required"})
 
@@ -35,13 +35,13 @@ export const registerUser=async(req,res)=>{
 
 export const userLogin =async(req,res)=>{
     const {email,password}=req.body
-    console.log("userLogin: Received data", { email, password: password ? "Provided" : "Not Provided" });
+    // console.log("userLogin: Received data", { email, password: password ? "Provided" : "Not Provided" });
     if(!email || ! password) 
        return res.status(400).json({message:"All Feild is Required"})
 
     try {
         const user= await userModel.findOne({email:email})
-        console.log("userLogin: Found user", user);
+        // console.log("userLogin: Found user", user);
         if(!user)
             return res.status(400).json({message:"Email is incorrect"})
 

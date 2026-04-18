@@ -24,11 +24,7 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const res = await api.post('/users/login', { email, password })
-      // Save token to localStorage
-      if (res.data?.token) {
-        localStorage.setItem('token', res.data.token)
-      }
-      // Return whatever your backend returns. Assuming payload has user (adjust as needed)
+      // Token is handled by secure cookies from the server.
       return res.data?.payload
     } catch (error) {
       const message =
@@ -105,7 +101,6 @@ const usersSlice = createSlice({
       state.loggedUser = null
       state.isLoggedIn = false
       state.error = null
-      localStorage.removeItem('token')
     },
     clearError(state) {
       state.error = null
@@ -171,7 +166,9 @@ const usersSlice = createSlice({
       })
       .addCase(getCurrentUser.rejected,(state,action)=>{
         state.loading=false;
-        state.error=action.payload;
+        state.isLoggedIn=false;
+        state.loggedUser=null;
+        state.error=null;
       
       })
       .addCase(logoutUser.pending, (state) => {
@@ -183,7 +180,6 @@ const usersSlice = createSlice({
         state.loggedUser = null;
         state.isLoggedIn = false;
         state.error = null;
-        localStorage.removeItem('token');
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
@@ -191,7 +187,6 @@ const usersSlice = createSlice({
         // Still logout locally even if backend fails
         state.loggedUser = null;
         state.isLoggedIn = false;
-        localStorage.removeItem('token');
       })
   },
 })

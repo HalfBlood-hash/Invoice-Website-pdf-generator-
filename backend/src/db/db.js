@@ -21,7 +21,7 @@ export const connectDB = async () => {
             connectTimeoutMS: 10000
         });
 
-        console.log(`Db connection successful! database=${dbName}`);
+        // console.log(`Db connection successful! database=${dbName}`);
     } catch (error) {
         console.error("Db connection failed!", error);
         process.exit(1);

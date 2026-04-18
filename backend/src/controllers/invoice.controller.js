@@ -5,7 +5,7 @@ import Invoice from "../model/invoice.model.js";
 import generateNextInvoiceNumber from "../utils/generateNextInvoiceNumber.js";
 
 const createInvoice = async (req, res) => {
-    console.log("createInvoice: Received data", req.body);
+    // console.log("createInvoice: Received data", req.body);
     try {
         const invoiceData = req.body;
         if (!invoiceData.invoiceNumber) {

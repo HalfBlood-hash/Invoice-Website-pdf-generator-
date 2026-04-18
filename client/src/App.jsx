@@ -48,7 +48,7 @@ const navigate = useNavigate()
  },[dispatch])
 
  useEffect(() => {
-  console.log("Auth state changed:", { loggedUser: loggedUser ? loggedUser.name : null, isLoggedIn, loading, error })   
+  // console.log("Auth state changed:", { loggedUser: loggedUser ? loggedUser.name : null, isLoggedIn, loading, error })   
  }, [loggedUser, isLoggedIn, loading, error])
 
   return (
