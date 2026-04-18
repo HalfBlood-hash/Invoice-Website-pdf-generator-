@@ -35,7 +35,7 @@ export const registerUser=async(req,res)=>{
 
 export const userLogin =async(req,res)=>{
     const {email,password}=req.body
-
+    console.log("userLogin: Received data", { email, password: password ? "Provided" : "Not Provided" });
     if(!email || ! password) 
        return res.status(400).json({message:"All Feild is Required"})
 
