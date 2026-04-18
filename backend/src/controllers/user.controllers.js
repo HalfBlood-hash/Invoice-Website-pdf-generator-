@@ -41,6 +41,7 @@ export const userLogin =async(req,res)=>{
 
     try {
         const user= await userModel.findOne({email:email})
+        console.log("userLogin: Found user", user);
         if(!user)
             return res.status(400).json({message:"Email is incorrect"})
 
