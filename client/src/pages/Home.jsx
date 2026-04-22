@@ -22,6 +22,7 @@ export default function Home() {
 
   const dispatch = useDispatch()
   const { invoiceNumber } = useSelector((state) => state.invoice)
+  const { quantity, price, gst, discount } = formData
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,17 +30,6 @@ export default function Home() {
       ...prev,
       [name]: value
     }));
-  };
-
-  const calculateTotal = () => {
-    const { quantity, price, gst, discount } = formData;
-    if (quantity && price) {
-      const subtotal = parseFloat(quantity) * parseFloat(price);
-      const gstAmount = subtotal * (parseFloat(gst || 0) / 100);
-      const discountAmount = subtotal * (parseFloat(discount || 0) / 100);
-      const total = subtotal + gstAmount - discountAmount;
-      setFormData(prev => ({ ...prev, total: total.toFixed(2) }));
-    }
   };
 
   useEffect(() => {
@@ -53,8 +43,18 @@ export default function Home() {
   }, [invoiceNumber])
 
   useEffect(() => {
-    calculateTotal();
-  }, [formData.quantity, formData.price, formData.gst, formData.discount]);
+    if (!quantity || !price) {
+      setFormData((prev) => (prev.total ? { ...prev, total: '' } : prev))
+      return
+    }
+
+    const subtotal = parseFloat(quantity) * parseFloat(price)
+    const gstAmount = subtotal * (parseFloat(gst || 0) / 100)
+    const discountAmount = subtotal * (parseFloat(discount || 0) / 100)
+    const total = (subtotal + gstAmount - discountAmount).toFixed(2)
+
+    setFormData((prev) => (prev.total === total ? prev : { ...prev, total }))
+  }, [quantity, price, gst, discount]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,7 +78,8 @@ export default function Home() {
           {
             desc: formData.items,
             qty: formData.quantity,
-            price: formData.price
+            price: formData.price,
+             unit: formData.units 
           }
         ];
 
@@ -253,6 +254,15 @@ export default function Home() {
                     type="text"
                     name="total"
                     value={formData.total}
+                    readOnly
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-200 text-gray-700"
+                  />
+                </td>
+                <td className="font-medium text-gray-600 pr-4 py-2">Status</td>
+                <td className="py-2">
+                  <input
+                    type="text"
+                    value="DUE"
                     readOnly
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-200 text-gray-700"
                   />

@@ -1,9 +1,9 @@
-import { use, useEffect, useState } from 'react'
-import api from './utils/axios.js'
-import {Routes,Route, Navigate, useLocation, useNavigate} from "react-router-dom"
+import { useEffect } from 'react'
+import {Routes,Route, Navigate} from "react-router-dom"
 import Login from './pages/Login.jsx'
 import History from './pages/History.jsx'
 import Home from './pages/Home.jsx'
+import InvoiceDetails from './pages/InvoiceDetails.jsx'
 import Header from './component/Header.jsx'
 import BillForm from './pages/BillForm.jsx'
 import { getCurrentUser } from './feature/userSlice.js'
@@ -38,18 +38,12 @@ const PublicRoute = ({ isLoggedIn, loading, children }) => {
 
 function App() {
 const dispatch=useDispatch()
-const {loggedUser,isLoggedIn,loading,error}=useSelector((state)=>state.users)
-const location = useLocation()
-const navigate = useNavigate()
+const {isLoggedIn,loading}=useSelector((state)=>state.users)
 
   
  useEffect(()=>{
   dispatch(getCurrentUser())
  },[dispatch])
-
- useEffect(() => {
-  // console.log("Auth state changed:", { loggedUser: loggedUser ? loggedUser.name : null, isLoggedIn, loading, error })   
- }, [loggedUser, isLoggedIn, loading, error])
 
   return (
     <>
@@ -58,6 +52,7 @@ const navigate = useNavigate()
       <Route  path='/'  element={<PublicRoute isLoggedIn={isLoggedIn} loading={loading}><Login/></PublicRoute>} />
       <Route  path='/home'  element={<ProtectedRoute isLoggedIn={isLoggedIn} loading={loading}><Home/></ProtectedRoute>} />
       <Route  path='/history'  element={<ProtectedRoute isLoggedIn={isLoggedIn} loading={loading}><History/></ProtectedRoute>} />
+      <Route  path='/history/:id'  element={<ProtectedRoute isLoggedIn={isLoggedIn} loading={loading}><InvoiceDetails/></ProtectedRoute>} />
       <Route  path='/billform'  element={<ProtectedRoute isLoggedIn={isLoggedIn} loading={loading}><BillForm/></ProtectedRoute>} />
     </Routes>
     

@@ -50,7 +50,23 @@ const invoiceSchema = new mongoose.Schema({
     total:{
         type:Number,
         required:true
-    }
+    },
+    paidAmount: {
+        type: Number,
+        default: 0
+    },
+    dueAmount: {
+        type: Number,
+        default: function () {
+            return this.total ?? 0;
+        }
+    },
+    status: {
+        type: String,
+        enum: ["DUE", "PARTIAL", "PAID"],
+        default: "DUE"
+    },
+    
 },{timestamps:true})
 
 

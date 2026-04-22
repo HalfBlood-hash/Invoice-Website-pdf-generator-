@@ -3,13 +3,12 @@ import {useSelector, useDispatch} from "react-redux"
 import { logoutUser } from "../feature/userSlice"
 
 export default function Header() {
-    const { loggedUser, isLoggedIn } = useSelector((state) => state.users);
+    const { isLoggedIn } = useSelector((state) => state.users);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
     const isHomePage = location.pathname === "/home";
-    const isHistoryPage = location.pathname === "/history";
-    const isBillFormPage = location.pathname === "/billform";
+    const isHistoryPage = location.pathname.startsWith("/history");
 
     const handleLogout = () => {
         dispatch(logoutUser());
