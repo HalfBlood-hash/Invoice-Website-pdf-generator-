@@ -2,6 +2,19 @@
 
 import userModel from "../model/user.model.js";
 import {accessandrefreshtoken} from "../utils/generateRefreshandAccessToken.js"
+
+const getCookieOptions = () => ({
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production'
+});
+
+const clearAuthCookies = (res) => {
+    const cookieOptions = getCookieOptions();
+    return res
+        .clearCookie('refreshtoken', cookieOptions)
+        .clearCookie('accesstoken', cookieOptions);
+};
+
 export const getUser= async(req,res)=>{
     try {
         const user =await userModel.find();
@@ -54,10 +67,7 @@ export const userLogin =async(req,res)=>{
         const loggedUser= await userModel.findById(user._id).select(
             "-password -refreshtoken"
         )
-        const options={
-            httpOnly:true,
-            secure: process.env.NODE_ENV === 'production'
-        }
+        const options=getCookieOptions()
         return res
         .status(200)
         .cookie("refreshtoken",refreshtoken,options)
@@ -75,6 +85,7 @@ export const userLogout = async (req, res) => {
     try {
         const refreshToken = req.cookies?.refreshtoken;
         if (!refreshToken) {
+            clearAuthCookies(res);
             return res.status(204).json({ message: 'No refresh token found' });
         }
 
@@ -84,14 +95,7 @@ export const userLogout = async (req, res) => {
             await user.save();
         }
 
-        const cookieOptions = {
-            httpOnly: true,
-            secure: true,
-        };
-
-        return res
-            .clearCookie('refreshtoken', cookieOptions)
-            .clearCookie('accesstoken', cookieOptions)
+        return clearAuthCookies(res)
             .status(200)
             .json({ message: 'Logout successful' });
     } catch (error) {
@@ -104,22 +108,23 @@ export const refreshAccessToken = async (req, res) => {
     try {
         const refreshToken = req.cookies?.refreshtoken || req.body?.refreshToken;
         if (!refreshToken) {
-            return res.status(401).json({ message: 'Refresh token not found' });
+            return clearAuthCookies(res)
+                .status(401)
+                .json({ message: 'Refresh token not found' });
         }
 
         const user = await userModel.findOne({ refreshtoken: refreshToken }).select('-password');
         if (!user) {
-            return res.status(401).json({ message: 'Invalid refresh token' });
+            return clearAuthCookies(res)
+                .status(401)
+                .json({ message: 'Invalid refresh token' });
         }
 
         const { accesstoken, refreshtoken: newRefreshToken } = await accessandrefreshtoken(user._id);
         user.refreshtoken = newRefreshToken;
         await user.save();
 
-        const cookieOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-        };
+        const cookieOptions = getCookieOptions();
 
         return res
             .cookie('accesstoken', accesstoken, cookieOptions)
@@ -128,7 +133,9 @@ export const refreshAccessToken = async (req, res) => {
             .json({ message: 'Token refreshed', token: accesstoken, payload: user });
     } catch (error) {
         console.error('refreshAccessToken error:', error);
-        return res.status(500).json({ message: 'Server error during token refresh' });
+        return clearAuthCookies(res)
+            .status(500)
+            .json({ message: 'Server error during token refresh' });
     }
 };
 
