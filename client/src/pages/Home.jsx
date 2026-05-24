@@ -58,7 +58,7 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log("items:", formData.items);
     try {
       const dataToSend = {
         ...formData,
@@ -79,7 +79,7 @@ export default function Home() {
             desc: formData.items,
             qty: formData.quantity,
             price: formData.price,
-             unit: formData.units 
+            unit: formData.units 
           }
         ];
 
