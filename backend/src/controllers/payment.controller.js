@@ -20,6 +20,11 @@ const addPayment = async (req, res) => {
             return res.status(404).json({ error: "Invoice not found" });
         }
 
+        const remainingDue = Number(invoice.dueAmount ?? invoice.total) || 0;
+        if (parsedAmount > remainingDue) {
+            return res.status(400).json({ error: "Payment cannot be greater than the remaining due amount" });
+        }
+
         let parsedPaymentDate;
         if (paymentDate) {
             parsedPaymentDate = new Date(paymentDate);

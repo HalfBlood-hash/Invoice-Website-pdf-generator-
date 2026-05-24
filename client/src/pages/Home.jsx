@@ -16,6 +16,9 @@ export default function Home() {
     units: 'sqft',
     gst: '',
     discount: '',
+    advancePaid: '',
+    paymentMode: 'Cash',
+    paymentDate: new Date().toISOString().slice(0, 10),
     dueDate: '',
     total: ''
   });
@@ -23,6 +26,11 @@ export default function Home() {
   const dispatch = useDispatch()
   const { invoiceNumber } = useSelector((state) => state.invoice)
   const { quantity, price, gst, discount } = formData
+  const totalAmount = Number(formData.total) || 0
+  const advancePaidValue = Number(formData.advancePaid) || 0
+  const dueAmountValue = Math.max(totalAmount - advancePaidValue, 0)
+  const paymentStatus =
+    advancePaidValue <= 0 ? 'DUE' : dueAmountValue === 0 ? 'PAID' : 'PARTIAL'
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,15 +68,34 @@ export default function Home() {
     e.preventDefault();
     console.log("items:", formData.items);
     try {
+      const advancePaid = parseFloat(formData.advancePaid || 0);
+      const total = parseFloat(formData.total);
+
+      if (Number.isNaN(total)) {
+        throw new Error('Total amount is not valid.');
+      }
+
+      if (Number.isNaN(advancePaid) || advancePaid < 0) {
+        throw new Error('Advance payment must be a valid number greater than or equal to 0.');
+      }
+
+      if (advancePaid > total) {
+        throw new Error('Advance payment cannot be greater than the invoice total.');
+      }
+
       const dataToSend = {
         ...formData,
         invoiceDate: new Date(formData.invoiceDate).toISOString(),
         dueDate: new Date(formData.dueDate).toISOString(),
+        paymentDate: advancePaid > 0
+          ? new Date(formData.paymentDate || formData.invoiceDate).toISOString()
+          : undefined,
         quantity: parseInt(formData.quantity),
         price: parseFloat(formData.price),
         gst: parseFloat(formData.gst || 0),
         discount: parseFloat(formData.discount || 0),
-        total: parseFloat(formData.total)
+        advancePaid,
+        total
       };
 
       // dispatch invoice creation through Redux
@@ -87,7 +114,10 @@ export default function Home() {
           customerName: formData.customerName,
           invoiceNumber: resultAction.payload.invoiceNumber || formData.invoiceNumber,
           invoiceDate: formData.invoiceDate,
-          items: pdfItems
+          items: pdfItems,
+          amountPaid: resultAction.payload.paidAmount,
+          dueAmount: resultAction.payload.dueAmount,
+          paymentStatus: resultAction.payload.status
         });
 
         alert('Invoice created & PDF downloaded!');
@@ -96,7 +126,7 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Failed to create invoice');
+      alert(error.message || 'Failed to create invoice');
     }
   };
 
@@ -248,6 +278,51 @@ export default function Home() {
               </tr>
 
               <tr>
+                <td className="font-medium text-gray-600 pr-4 py-2">Advance Paid</td>
+                <td className="py-2">
+                  <input
+                    type="number"
+                    name="advancePaid"
+                    value={formData.advancePaid}
+                    onChange={handleChange}
+                    className={inputStyle}
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                  />
+                </td>
+
+                <td className="font-medium text-gray-600 pr-4 py-2">Payment Mode</td>
+                <td className="py-2">
+                  <select
+                    name="paymentMode"
+                    value={formData.paymentMode}
+                    onChange={handleChange}
+                    className={inputStyle}
+                    disabled={advancePaidValue <= 0}
+                  >
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Card">Card</option>
+                    <option value="Cheque">Cheque</option>
+                  </select>
+                </td>
+
+                <td className="font-medium text-gray-600 pr-4 py-2">Payment Date</td>
+                <td className="py-2">
+                  <input
+                    type="date"
+                    name="paymentDate"
+                    value={formData.paymentDate}
+                    onChange={handleChange}
+                    className={inputStyle}
+                    disabled={advancePaidValue <= 0}
+                  />
+                </td>
+              </tr>
+
+              <tr>
                 <td className="font-medium text-gray-600 pr-4 py-2">Total</td>
                 <td className="py-2">
                   <input
@@ -258,17 +333,30 @@ export default function Home() {
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-200 text-gray-700"
                   />
                 </td>
-                <td className="font-medium text-gray-600 pr-4 py-2">Status</td>
+
+                <td className="font-medium text-gray-600 pr-4 py-2">Due Amount</td>
                 <td className="py-2">
                   <input
                     type="text"
-                    value="DUE"
+                    value={totalAmount ? dueAmountValue.toFixed(2) : ''}
                     readOnly
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-200 text-gray-700"
                   />
                 </td>
 
-                <td colSpan="4" className="py-2">
+                <td className="font-medium text-gray-600 pr-4 py-2">Status</td>
+                <td className="py-2">
+                  <input
+                    type="text"
+                    value={paymentStatus}
+                    readOnly
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-gray-200 text-gray-700"
+                  />
+                </td>
+              </tr>
+
+              <tr>
+                <td colSpan="6" className="py-2">
                   <button
                     type="submit"
                     className="w-full bg-blue-500 text-white py-2 rounded-lg font-semibold shadow-md transition duration-200 ease-in-out hover:bg-blue-600 hover:shadow-lg hover:-translate-y-0.5"

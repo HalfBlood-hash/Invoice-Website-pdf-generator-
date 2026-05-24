@@ -68,6 +68,9 @@ function InvoiceDetailsContent({ invoiceId }) {
         ? new Date(invoiceToDownload.invoiceDate).toISOString().slice(0, 10)
         : '',
       items,
+      amountPaid: invoiceToDownload.paidAmount,
+      dueAmount: invoiceToDownload.dueAmount,
+      paymentStatus: invoiceToDownload.status,
       fileName: `Invoice-${invoiceToDownload.invoiceNumber || 'unknown'}.pdf`
     })
   }

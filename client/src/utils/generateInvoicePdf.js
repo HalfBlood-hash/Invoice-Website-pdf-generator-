@@ -38,6 +38,9 @@ export async function generateInvoicePdf({
   invoiceNumber,
   invoiceDate,
   items = [],
+  amountPaid = 0,
+  dueAmount = 0,
+  paymentStatus = "DUE",
   logoPath = "/vite.svg",
   fileName,
 }) {
@@ -241,6 +244,32 @@ export async function generateInvoicePdf({
     font: bold,
     color: rgb(1, 1, 1),
   });
+
+  if (Number(amountPaid) > 0) {
+    const paymentSummaryX = width - margin - 170;
+    tableY -= 24;
+
+    page.drawText(`Advance Paid: Rs. ${Number(amountPaid).toFixed(2)}`, {
+      x: paymentSummaryX,
+      y: tableY,
+      size: 10,
+      font: bold,
+    });
+
+    page.drawText(`Balance Due: Rs. ${Number(dueAmount || 0).toFixed(2)}`, {
+      x: paymentSummaryX,
+      y: tableY - 14,
+      size: 10,
+      font,
+    });
+
+    page.drawText(`Status: ${paymentStatus || "DUE"}`, {
+      x: paymentSummaryX,
+      y: tableY - 28,
+      size: 10,
+      font,
+    });
+  }
 
   const pdfBytes = await pdfDoc.save();
   const blob = new Blob([pdfBytes], { type: "application/pdf" });

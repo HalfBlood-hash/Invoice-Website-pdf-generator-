@@ -37,20 +37,65 @@ const attachPaymentsToInvoices = async (invoiceDocs) => {
 };
 
 const createInvoice = async (req, res) => {
-    // console.log("createInvoice: Received data", req.body);
     try {
-        const invoiceData = req.body;
+        const invoiceData = { ...req.body };
+        const advancePaid = Number(invoiceData.advancePaid ?? invoiceData.paidAmount ?? 0);
+
+        if (Number.isNaN(advancePaid) || advancePaid < 0) {
+            return res.status(400).json({ error: "advancePaid must be a valid number greater than or equal to 0" });
+        }
+
+        if (advancePaid > 0 && !invoiceData.paymentMode) {
+            return res.status(400).json({ error: "paymentMode is required when adding an advance payment" });
+        }
+
+        let parsedPaymentDate;
+        if (invoiceData.paymentDate) {
+            parsedPaymentDate = new Date(invoiceData.paymentDate);
+            if (Number.isNaN(parsedPaymentDate.getTime())) {
+                return res.status(400).json({ error: "paymentDate must be a valid date" });
+            }
+        }
+
         if (!invoiceData.invoiceNumber) {
             invoiceData.invoiceNumber = await generateNextInvoiceNumber();
         }
-        const paymentSummary = calculateInvoicePaymentSummary(invoiceData.total, 0);
+
+        const paymentSummary = calculateInvoicePaymentSummary(invoiceData.total, advancePaid);
+        if (paymentSummary.paidAmount > paymentSummary.total) {
+            return res.status(400).json({ error: "Advance payment cannot be greater than the invoice total" });
+        }
+
+        delete invoiceData.advancePaid;
+
+        const paymentMode = invoiceData.paymentMode;
+        delete invoiceData.paymentMode;
+        delete invoiceData.paymentDate;
+
         invoiceData.total = paymentSummary.total;
         invoiceData.paidAmount = paymentSummary.paidAmount;
         invoiceData.dueAmount = paymentSummary.dueAmount;
         invoiceData.status = paymentSummary.status;
+
         const newInvoice = new Invoice(invoiceData);
         const savedInvoice = await newInvoice.save();
-        res.status(201).json(savedInvoice);
+
+        if (paymentSummary.paidAmount > 0) {
+            try {
+                await Payment.create({
+                    invoiceId: savedInvoice._id,
+                    amountPaid: paymentSummary.paidAmount,
+                    paymentDate: parsedPaymentDate,
+                    paymentMode
+                });
+            } catch (paymentError) {
+                await Invoice.findByIdAndDelete(savedInvoice._id);
+                throw paymentError;
+            }
+        }
+
+        const [invoiceWithPayments] = await attachPaymentsToInvoices([savedInvoice]);
+        res.status(201).json(invoiceWithPayments || savedInvoice);
     } catch (error) {
         console.error('createInvoice error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
